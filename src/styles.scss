@@ -1,1 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
+// Default Bootstrap 4
+@import "~bootstrap/scss/bootstrap";
+
+// If you want to override variables do it here
+@import "scss/variables";
+
+// If you want to add something do it here
+@import "scss/custom";
+@import "scss/fonts";
+@import "scss/app-material";
