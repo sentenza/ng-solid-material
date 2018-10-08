@@ -1,0 +1,14 @@
+// Define a mixin that accepts a theme and outputs the color styles 
+// for the component.
+@mixin navbar-theme($theme) {
+    $primary: map-get($theme, primary);
+    $secondary: map-get($theme, seconday);
+    $accent: map-get($theme, accent);
+    $warn: map-get($theme, warn);
+    $background: map-get($theme, background);
+    $foreground: map-get($theme, foreground);
+  
+    // #app-navbar {
+    //   background-color: mat-color($mat-indigo, 800);
+    // }
+  }

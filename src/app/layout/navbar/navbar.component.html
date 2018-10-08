@@ -1,5 +1,6 @@
-<mat-toolbar color="primary">
+<mat-toolbar color="primary" id="app-navbar">
   <mat-toolbar-row>
+    <button mat-button (click)="openSidebar.emit()" ><mat-icon>menu</mat-icon></button>
     <span>{{ title }}</span>
     <span class="navbar-spacer"></span>
     <mat-icon class="navbar-icon">verified_user</mat-icon>
