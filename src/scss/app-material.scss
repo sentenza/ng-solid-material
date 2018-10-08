@@ -1,14 +1,58 @@
 // Angular Material
+
+/* **** CUSTOM THEME **** */
+// Import all the tools needed to customize the theme and extract parts of it
+// @import '~@angular/material/theming';
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+// @include mat-core();
+// Palette: @see http://mcg.mbitson.com
+
+
+// Define the theme.
+// $candy-app-primary: mat-palette($mat-indigo);
+// $candy-app-accent:  mat-palette($mat-pink, A200, A100, A400);
+// $candy-app-theme:   mat-light-theme($candy-app-primary, $candy-app-accent);
+
+// Include the theme styles for only specified components.
+// @include mat-core-theme($candy-app-theme);
+// @include mat-button-theme($candy-app-theme);
+// @include mat-checkbox-theme($candy-app-theme);
+
+
+
+
+/* **** STYLING COMPONENTS **** */
+// @see https://material.angular.io/guide/theming-your-components
+// Colors: https://material.io/archive/guidelines/style/color.html
+
 // Import all the tools needed to customize the theme and extract parts of it
 @import '~@angular/material/theming';
+@include mat-core();
 
+$primary: mat-palette($mat-indigo);
+$accent:  mat-palette($mat-yellow);
+$warn:    mat-palette($mat-red);
+
+$theme: mat-light-theme($primary, $accent, $warn);
+
+@include angular-material-theme($theme);
+
+// Component styles
+@import '../app/layout/footer/footer-theme';
+@import '../app/layout/navbar/navbar-theme';
+
+/* **** PREBUILT THEME **** */
+
+// Import a pre-built theme
 // @import "~@angular/material/prebuilt-themes/pink-bluegrey.css";
-@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+// @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 // @import "~@angular/material/prebuilt-themes/purple-green.css";
 // @import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
 
 
-
-// @import '../app/shared/footer/footer-theme';
-
-// @include footer-theme($theme);
+@include footer-theme($theme);
+@include navbar-theme($theme);
