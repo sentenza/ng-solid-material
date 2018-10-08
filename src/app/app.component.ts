@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'
+import { Component, ViewChild } from '@angular/core'
 
 @Component({
   selector: 'app-root',
@@ -6,4 +6,10 @@ import { Component } from '@angular/core'
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+
+  @ViewChild('sidenav') sidenavRef
+
+  toggleSidebar() {
+    this.sidenavRef.toggle()
+  }
 }

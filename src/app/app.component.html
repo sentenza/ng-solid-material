@@ -1,16 +1,20 @@
-<app-navbar></app-navbar>
+<app-navbar (openSidebar)="toggleSidebar()"></app-navbar>
 
 <!-- Creates a layout with a left-positioned sidenav and explicit content. -->
-<mat-sidenav-container>
-  <mat-sidenav opened>Start</mat-sidenav>
-  <mat-sidenav-content flex layout="column">
-      <main flex="none">
+<mat-sidenav-container class="app-container d-flex flex-column h-100">
+  <mat-sidenav #sidenav class="app-sidenav">
+    <mat-list class="list-nav">
+      <mat-list-item class="list-item">
+        <span class="source-name">The list item</span>
+      </mat-list-item>
+   </mat-list>
+  </mat-sidenav>
+  <mat-sidenav-content class="app-sidenav-content flex-grow-1">
+      <main>
         <router-outlet></router-outlet>
       </main>
-      <div flex></div>
   </mat-sidenav-content>
 </mat-sidenav-container>
 
 <!-- The Footer -->
-<app-footer flex="none"></app-footer>
-
+<app-footer class="app-footer fixed-bottom"></app-footer>

@@ -1,5 +1,5 @@
 {
-  "name": "solid-app",
+  "name": "ng-solid-app",
   "version": "0.0.1-alpha",
   "scripts": {
     "ng": "ng",
