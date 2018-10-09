@@ -11,6 +11,7 @@
 
     <!-- <a mat-button class="docs-navbar-hide-small docs-button" routerLink="guides">Guides</a> -->
     <span class="navbar-spacer"></span>
-    <mat-icon class="navbar-icon">verified_user</mat-icon>
+    <mat-icon class="navbar-icon" *ngIf="loggedIn">verified_user</mat-icon>
+    <mat-icon class="navbar-icon" *ngIf="!loggedIn">lock_open</mat-icon>
   </mat-toolbar-row>
 </mat-toolbar>

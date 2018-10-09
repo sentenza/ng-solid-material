@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { Router } from '@angular/router'
-import { Observable, from } from 'rxjs'
+import { Observable, from, defer } from 'rxjs'
 declare let solid: any
 
 // Service
@@ -29,32 +29,42 @@ export class SolidAuthService {
   }
 
   constructor(private router: Router, private rdf: RdfService) {
-    //  this.isSessionActive()
+    this.getCurrentSession()
+  }
+
+  /**
+   * @type {Observable<SolidSession>}
+   */
+  public get currentSession(): Observable<SolidSession> {
+    return this.session
   }
 
   /*
    * This will check if current session is active to avoid security problems
   */
-  isSessionActive = async () => {
+  private getCurrentSession = async () => {
     this.session = from(solid.auth.currentSession())
   }
 
   /**
-   * Alternative login-popup function. This will open a popup that will allow you to choose an identity provider without
-   * leaving the current page.
-   * This is recommended if you don't want to leave the current workflow.
+   * Makes a call to the solid auth endpoint.
+   * It currently requires a callback url and a storage option or else
+   * the call will fail.
+   * Note: The Identity Provider URL it should be fetched using the list of
+   * Identity Providers defined in getIdentityProviders().
+   *
+   * @param {string} idp Identity Provider URL
+   * @see getIdentityProviders()
+   * @see https://medium.com/@benlesh/rxjs-observable-interop-with-promises-and-async-await-bebb05306875
    */
-  solidLoginPopup = async () => {
-    try {
-      await solid.auth.popupLogin({ popupUri: './login-popup'})
-      // Check if session is valid to avoid redirect issues
-      await this.isSessionActive()
-
-      // popupLogin success redirect to profile
-      this.router.navigate(['/card'])
-    } catch (error) {
-      console.log(`Error: ${error}`)
-    }
+  solidLogin(idp: string): Observable<any> {
+    return defer(async function() {
+      const loginOptions = {
+        callbackUri: `${window.location.href}`,
+        storage: localStorage
+      }
+      return await solid.auth.login(idp, loginOptions)
+    })
   }
 
   /**
@@ -83,15 +93,21 @@ export class SolidAuthService {
   }
 
   /**
-   * Makes a call to the solid auth endpoint. It requires an identity provider url, which here is coming from the dropdown, which
-   * is populated by the getIdentityProviders() function call. It currently requires a callback url and a storage option or else
-   * the call will fail.
+   * Alternative login-popup function. This will open a popup that will allow you to choose an identity provider without
+   * leaving the current page.
+   * This is recommended if you don't want to leave the current workflow.
    */
-  solidLogin = async (idp: string) => {
-    await solid.auth.popupLogin(idp, {
-      callbackUri: `${window.location.href}`,
-      storage: localStorage,
-    })
+  solidLoginPopup = async () => {
+    try {
+      await solid.auth.popupLogin({ popupUri: './login-popup'})
+      // Check if session is valid to avoid redirect issues
+      await this.getCurrentSession()
+
+      // popupLogin success redirect to profile
+      this.router.navigate(['/card'])
+    } catch (error) {
+      console.log(`Error: ${error}`)
+    }
   }
 
   /**

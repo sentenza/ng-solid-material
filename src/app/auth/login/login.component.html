@@ -63,10 +63,11 @@
             {{ provider.name }}
           </mat-option>
         </mat-select>
+        <mat-hint *ngIf="selectedProviderUrl">
+          <abbr title="Identity Provider URL">IDP</abbr>: {{selectedProviderUrl}}
+        </mat-hint>
         <mat-error *ngIf="providerControl.hasError('required')">Please choose a provider</mat-error>
       </mat-form-field>
-
-      <p>Selected provider URL: {{selectedProviderUrl}}</p>
       
       <input type="text"
              class="wide-text"
