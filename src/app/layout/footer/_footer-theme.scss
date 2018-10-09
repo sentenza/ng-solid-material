@@ -8,9 +8,8 @@
     $foreground: map-get($theme, foreground);
   
     .app-footer {
-      padding: 12px;
+      padding: 1em 0;
       font-size: 12px;
-      margin-top: 40px;
       background-color: mat-color($primary);
       color: mat-color($mat-indigo, 50);
       a {

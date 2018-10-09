@@ -1,25 +1,15 @@
-@mixin login-page-theme($theme) {
+@mixin login-theme($theme) {
     $primary: map-get($theme, primary);
     $accent: map-get($theme, accent);
     $warn: map-get($theme, warn);
     $background: map-get($theme, background);
     $foreground: map-get($theme, foreground);
   
-    login-page {
-      .app-header-background {
-        background: mat-color($primary);
-      }
-  
-      .app-header-headline {
-        color: mat-color($primary, default-contrast);
-      }
-  
-      .app-header-start {
-        color: mat-color($primary);
-      }
-  
-      .app-homepage-row {
-        color: mat-color($foreground, secondary-text);
+    .login-page {
+      .app-header-container {
+        background-color: mat-color($primary);
+        border-radius: 0%;
+        color: whitesmoke;
       }
     }
   }

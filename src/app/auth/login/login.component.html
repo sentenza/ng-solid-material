@@ -1,18 +1,16 @@
 <div class="login-page">
-  <!-- Header -->
-  <header class="app-header-background">
-    <div class="app-header-section">
-      <div class="app-header-headline">
-        <h1 class="mat-h1">Angular Solid App</h1>
-        <h2>An Angular application using the Solid ("SOcial LInked Data") set of conventions and styled with
-          the material design
-        </h2>
-      </div>
-      <div class="docs-header-start">
-      </div>
+    <div class="jumbotron app-header-container">
+        <div class="container">
+          <h1 class="display-4">Angular Solid App</h1>
+          <div class="row">
+            <div class="col-10 offset-1">
+                <p class="lead">An Angular application using the Solid ("SOcial LInked Data") set of conventions and styled with
+                    the material design.</p>
+            </div>
+          </div>
+
+        </div>
     </div>
-  </header>
-  <!-- Header -->
 
     <!-- APP LOGO -->
     <div style="margin-top:60px;">
@@ -53,6 +51,22 @@
         </ng-template>
   
       </ng-select> -->
+
+      <mat-form-field>
+        <mat-select
+          placeholder="Select ID Provider"
+          [formControl]="providerControl"
+          [(value)]="selectedProviderUrl"
+          required>
+          <mat-option>--</mat-option>
+          <mat-option *ngFor="let provider of identityProviders" [value]="provider.loginUrl">
+            {{ provider.name }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="providerControl.hasError('required')">Please choose a provider</mat-error>
+      </mat-form-field>
+
+      <p>Selected provider URL: {{selectedProviderUrl}}</p>
       
       <input type="text"
              class="wide-text"

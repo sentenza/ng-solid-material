@@ -7,7 +7,8 @@ import {
   MatSidenavModule,
   MatButtonModule,
   MatMenuModule,
-  MatListModule
+  MatListModule,
+  MatSelectModule
 } from '@angular/material'
 
 @NgModule({
@@ -21,7 +22,7 @@ import {
     MatButtonModule,
     MatMenuModule,
     MatListModule,
-
+    MatSelectModule
   ],
   declarations: []
 })

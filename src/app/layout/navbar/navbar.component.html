@@ -1,7 +1,15 @@
-<mat-toolbar color="primary" id="app-navbar">
+<mat-toolbar color="primary" id="app-navbar" class="mat-elevation-z6 fixed-top">
   <mat-toolbar-row>
     <button mat-button (click)="openSidebar.emit()" ><mat-icon>menu</mat-icon></button>
-    <span>{{ title }}</span>
+    <!-- Logo and Button Title -->
+    <a mat-button class="nav-button" routerLink="/" aria-label="title">
+      <img class="nav-angular-logo"
+           src="assets/svg/angular-white-transparent.svg"
+           alt="angular">
+      <span>{{ title }}</span>
+    </a>
+
+    <!-- <a mat-button class="docs-navbar-hide-small docs-button" routerLink="guides">Guides</a> -->
     <span class="navbar-spacer"></span>
     <mat-icon class="navbar-icon">verified_user</mat-icon>
   </mat-toolbar-row>

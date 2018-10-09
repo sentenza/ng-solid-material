@@ -7,7 +7,7 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core'
 })
 export class NavbarComponent implements OnInit {
 
-  title = 'Solid App Test'
+  title = 'Angular Solid App'
 
   @Output() openSidebar: EventEmitter<null> = new EventEmitter()
 

@@ -27,7 +27,7 @@
   "bugs": {
     "url": "https://github.com/DefinitelyTyped/DefinitelyTyped/issues"
   },
-  "bundleDependencies": false,
+  "bundleDependencies": [],
   "contributors": [
     {
       "name": "Cénotélie",

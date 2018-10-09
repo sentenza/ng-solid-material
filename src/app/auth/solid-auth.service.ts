@@ -88,8 +88,8 @@ export class SolidAuthService {
    * the call will fail.
    */
   solidLogin = async (idp: string) => {
-    await solid.auth.login(idp, {
-      callbackUri: `${window.location.href}card`,
+    await solid.auth.popupLogin(idp, {
+      callbackUri: `${window.location.href}`,
       storage: localStorage,
     })
   }
