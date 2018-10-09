@@ -13,5 +13,12 @@
     <span class="navbar-spacer"></span>
     <mat-icon class="navbar-icon" *ngIf="loggedIn">verified_user</mat-icon>
     <mat-icon class="navbar-icon" *ngIf="!loggedIn">lock_open</mat-icon>
+    <button
+      mat-button
+      *ngIf="loggedIn"
+      (click)="logout()"
+      class="nav-button">
+      Logout
+    </button>
   </mat-toolbar-row>
 </mat-toolbar>

@@ -12,8 +12,11 @@
     vertical-align: middle;
 }
 
-a.nav-button:hover {
-    color: white;
-    text-transform: none;
-    text-decoration: none;
+a.nav-button {
+    text-transform: uppercase;
+
+    &:hover {
+        color: white;
+        text-decoration: none;
+    }
 }

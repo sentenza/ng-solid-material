@@ -68,6 +68,17 @@
         </mat-hint>
         <mat-error *ngIf="providerControl.hasError('required')">Please choose a provider</mat-error>
       </mat-form-field>
+      <!-- Material Button  -->
+      <button
+        mat-raised-button
+        (click)="onLogin()"
+        color="primary"
+        *ngIf="selectedProviderUrl !== undefined || customProviderUrl !== undefined"
+        [disabled]="selectedProviderUrl === null && !customProviderUrl"
+        class="login-button">
+        GO
+      </button>
+      <!-- Material Button -->
       
       <input type="text"
              class="wide-text"
@@ -75,19 +86,23 @@
              placeholder="Enter WebID"
              style="margin-top:10px; padding: 12px 10px; width: 340px; height: 16px; display: block; margin-left: auto; margin-right: auto;"
              [(ngModel)]="customProviderUrl" />
-      <button class="wide-button" (click)="onLogin()" *ngIf="selectedProviderUrl !== undefined || customProviderUrl !== undefined" [disabled]="selectedProviderUrl===null && !customProviderUrl" style="margin-top:10px;">Go</button>
     </div>
   
     <!-- REGISTRATION -->
     <div class="registration-link">
       <p style="margin: 12px;">Don't have a Solid Identity?</p>
-      <button class="wide-button" (click)="goToRegistration()">Register</button>
+      <button
+        mat-raised-button
+        color="basic"
+        class="register-button"
+        (click)="goToRegistration()">
+        Register
+      </button>
     </div>
   
     <!-- HELP -->
     <div style="margin-top: 48px;">
       <a href="https://solid.mit.edu" target="_blank" class="small-link">
-        <mat-icon class="navbar-icon">info</mat-icon>
         What is a Solid Identity?
       </a>
     </div>

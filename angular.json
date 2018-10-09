@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "solid-app": {
+    "ng-solid-app": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/solid-app",
+            "outputPath": "dist/ng-solid-app",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -56,18 +56,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "solid-app:build"
+            "browserTarget": "ng-solid-app:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "solid-app:build:production"
+              "browserTarget": "ng-solid-app:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "solid-app:build"
+            "browserTarget": "ng-solid-app:build"
           }
         },
         "test": {
@@ -101,7 +101,7 @@
         }
       }
     },
-    "solid-app-e2e": {
+    "ng-solid-app-e2e": {
       "root": "e2e/",
       "projectType": "application",
       "architect": {
@@ -109,11 +109,11 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "solid-app:serve"
+            "devServerTarget": "ng-solid-app:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "solid-app:serve:production"
+              "devServerTarget": "ng-solid-app:serve:production"
             }
           }
         },
@@ -129,5 +129,5 @@
       }
     }
   },
-  "defaultProject": "solid-app"
+  "defaultProject": "ng-solid-app"
 }

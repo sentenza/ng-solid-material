@@ -36,7 +36,7 @@ export class SolidAuthService {
    * @type {Observable<SolidSession>}
    */
   public get currentSession(): Observable<SolidSession> {
-    return this.session
+    return from(solid.auth.currentSession())
   }
 
   /*
@@ -68,18 +68,17 @@ export class SolidAuthService {
   }
 
   /**
-   * Signs out of Solid in this app, by calling the logout function and clearing the localStorage token
+   * Signs out of Solid in this app, by calling the logout
+   * function and clearing the localStorage token.
    */
-  solidSignOut = async () => {
-    try {
-      await solid.auth.logout()
-      // Remove localStorage
-      localStorage.removeItem('solid-auth-client')
-      // Redirect to login page
-      this.router.navigate(['/'])
-    } catch (error) {
-      console.log(`Error: ${error}`)
-    }
+  solidSignOut(): Observable<any> {
+    return defer(async function() {
+      try {
+        return await solid.auth.logout()
+      } catch (error) {
+        console.error(error)
+      }
+    })
   }
 
   saveOldUserData = (profile: any) => {

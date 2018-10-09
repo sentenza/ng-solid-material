@@ -44,7 +44,8 @@ $theme: mat-light-theme($primary, $accent, $warn);
 // Component styles
 @import '../app/layout/footer/footer-theme';
 @import '../app/layout/navbar/navbar-theme';
-@import '../app/auth/login/login-theme';
+// @import '../app/auth/login/login-theme';
+@import './app-theme';
 
 /* **** PREBUILT THEME **** */
 
@@ -54,7 +55,7 @@ $theme: mat-light-theme($primary, $accent, $warn);
 // @import "~@angular/material/prebuilt-themes/purple-green.css";
 // @import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
 
-
 @include footer-theme($theme);
 @include navbar-theme($theme);
-@include login-theme($theme);
+@include app-theme($theme);
+// @include login-theme($theme);

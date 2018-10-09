@@ -13,6 +13,7 @@ import { HomeComponent } from './home/home.component'
 import { AppRoutingModule } from './app-routing.module'
 import { LoginComponent } from './auth/login/login.component'
 import { RdfService } from './shared/rdf.service'
+import { ProfileComponent } from './profile/profile.component'
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { RdfService } from './shared/rdf.service'
     NavbarComponent,
     FooterComponent,
     HomeComponent,
-    LoginComponent
+    LoginComponent,
+    ProfileComponent
   ],
   imports: [
     AppRoutingModule,

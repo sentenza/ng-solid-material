@@ -2,6 +2,15 @@
   text-align: center;
   font-family: 'Roboto', sans-serif;
   color: #666;
+
+  .login-button {
+    margin-left: 1.5em;
+  }
+
+  .login-button,
+  .register-button {
+    text-transform: uppercase;
+  }
 }
 
 // .login-page h1 {

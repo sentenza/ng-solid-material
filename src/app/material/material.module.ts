@@ -8,7 +8,8 @@ import {
   MatButtonModule,
   MatMenuModule,
   MatListModule,
-  MatSelectModule
+  MatSelectModule,
+  MatProgressSpinnerModule
 } from '@angular/material'
 
 @NgModule({
@@ -22,7 +23,8 @@ import {
     MatButtonModule,
     MatMenuModule,
     MatListModule,
-    MatSelectModule
+    MatSelectModule,
+    MatProgressSpinnerModule
   ],
   declarations: []
 })
