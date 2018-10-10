@@ -5,9 +5,9 @@
       <h1 class="display-4">Profile Card</h1>
       <div class="row">
         <div class="col-10 offset-1">
-            <p class="lead">
-              This page will show the information about the user logged in using Solid
-            </p>
+          <p class="lead">
+            This page will show the information about the user logged in using Solid
+          </p>
         </div>
       </div>
 
@@ -17,65 +17,114 @@
 
   <!-- Container -->
   <div class="container">
-  <!-- LOADING IMAGE -->
-  <div class="rowjustify-content-center">
-    <div class="col-3 mx-auto">
-      <div class="loading-image" *ngIf="loadingProfile">
+    <!-- LOADING IMAGE -->
+    <div class="rowjustify-content-center">
+      <div class="col-3 mx-auto">
+        <div class="loading-image" *ngIf="loadingProfile">
           <mat-spinner></mat-spinner>
         </div>
       </div>
     </div>
+    <!-- LOADING IMAGE -->
 
 
+    <!-- MAIN PROFILE -->
+    <div class="profile-fields-container" *ngIf="!loadingProfile">
+      <!-- Profile Image -->
+      <div class="row">
+        <div class="col d-flex justify-content-center">
+          <div class="profile-image-container">
+            <img [src]="profileImage" class="profile-pic">
+          </div>
+        </div>
+      </div>
+      <!-- Profile Image -->
 
-  <!-- MAIN PROFILE -->
-  <div class="profile-fields-container" *ngIf="!loadingProfile">
-    <div class="profile-image-container">
-      <img [src]="profileImage" />
+
+      <form
+        class="profile-form"
+        [formGroup]="profileForm"
+        (ngSubmit)="onSubmit()">
+        <!-- ROW -->
+        <div class="row">
+          <!-- COLUMN -->
+          <div class="col-6 d-flex flex-column">
+            <!-- NAME -->
+            <mat-form-field>
+              <input
+                matInput
+                placeholder="Name"
+                formControlName="name"
+                [errorStateMatcher]="matcher">
+            </mat-form-field>
+
+            <!-- ADDRESS -->
+            <mat-form-field>
+              <input
+                matInput
+                placeholder="Address"
+                formControlName="address"
+                [errorStateMatcher]="matcher">
+            </mat-form-field>
+
+            <!-- PHONE -->
+            <mat-form-field>
+              <input
+                matInput
+                placeholder="Phone"
+                formControlName="phone"
+                [errorStateMatcher]="matcher">
+            </mat-form-field>
+
+          </div>
+          <!-- COL-6 -->
+
+          <!-- COLUMN -->
+          <div class="col-6 d-flex flex-column">
+            <!-- EMAIL -->
+            <mat-form-field>
+              <input
+                matInput
+                placeholder="Email"
+                formControlName="email"
+                [errorStateMatcher]="matcher">
+              <mat-error *ngIf="profileForm.get('email').hasError() && !emailFormControl.hasError('required')">
+                Please enter a valid email address
+              </mat-error>
+              <mat-error *ngIf="profileForm.get('email').hasError('required')">
+                Email is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <!-- ROLE -->
+            <mat-form-field>
+              <input
+                matInput
+                placeholder="Role"
+                formControlName="role"
+                [errorStateMatcher]="matcher">
+            </mat-form-field>
+            <!-- ORGANIZATION -->
+            <mat-form-field>
+              <input
+                matInput
+                placeholder="Company"
+                formControlName="company"
+                [errorStateMatcher]="matcher">
+            </mat-form-field>
+
+          </div>
+          <!-- COL-6 -->
+
+        </div>
+        <!-- ROW -->
+
+        <!-- <div class="profile-save-button-container">
+          <button type="submit" class="wide-button profile-save-button" [disabled]="!cardForm || cardForm.pristine">Save</button>
+        </div> -->
+      </form>
     </div>
-    <form style="padding-top: 26px;" #f="ngForm" (submit)="onSubmit()">
-      <div class="fields pure-g">
-        <!-- NAME -->
-        <div class="pure-u-1-1 pure-u-md-1-2 form-group">
-          <i class="fas fa-user"></i> <input type="text" class="field-text form-control" name="fn" placeholder="NAME" [(ngModel)]="profile.fn" />
-        </div>
-
-        <!-- PHONE -->
-        <div class="pure-u-1-1 pure-u-md-1-2 form-group">
-          <i class="fas fa-phone"></i><input type="text" class="field-text form-control" name="phone" placeholder="PHONE" [(ngModel)]="profile.phone" />
-        </div>
-      </div>
-
-      <div class="fields pure-g">
-        <!-- ROLE -->
-        <div class="pure-u-1-1 pure-u-md-1-2 form-group">
-          <i class="fas fa-user-astronaut"></i> <input type="text" class="field-text form-control" name="role" placeholder="ROLE" [(ngModel)]="profile.role" />
-        </div>
-
-        <!-- EMAIL -->
-        <div class="pure-u-1-1 pure-u-md-1-2 form-group">
-          <i class="fas fa-envelope"></i><input type="text" class="field-text form-control" name="email" placeholder="EMAIL" [(ngModel)]="profile.email" />
-        </div>
-      </div>
-
-      <div class="fields pure-g">
-        <!-- ORGANIZATION -->
-        <div class="pure-u-1-1 pure-u-md-1-2 form-group">
-          <i class="fas fa-building"></i> <input type="text" class="field-text form-control" name="company" placeholder="ORGANIZATION" [(ngModel)]="profile.company" />
-        </div>
-
-        <!-- ADDRESS -->
-        <div class="pure-u-1-1 pure-u-md-1-2 form-group">
-          <i class="fas fa-map-marker-alt" style="width: 12px; margin-left: 2px;"></i><input type="text" class="field-text form-control" name="address" placeholder="ADDRESS" [(ngModel)]="profile.address.street" />
-        </div>
-      </div>
-
-      <div class="profile-save-button-container">
-        <button type="submit" class="wide-button profile-save-button" [disabled]="!cardForm || cardForm.pristine">Save</button>
-      </div>
-    </form>
   </div>
-</div>
-<!-- Container -->
+  <!-- Container -->
 </div>
 <!-- Profile Page -->

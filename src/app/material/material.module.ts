@@ -9,7 +9,8 @@ import {
   MatMenuModule,
   MatListModule,
   MatSelectModule,
-  MatProgressSpinnerModule
+  MatProgressSpinnerModule,
+  MatInputModule,
 } from '@angular/material'
 
 @NgModule({
@@ -24,7 +25,8 @@ import {
     MatMenuModule,
     MatListModule,
     MatSelectModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatInputModule
   ],
   declarations: []
 })
