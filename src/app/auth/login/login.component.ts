@@ -37,6 +37,8 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   loginSubscription: Subscription
 
+  loggedInSub: Subscription
+
   loggedIn: Boolean
 
   constructor(private authService: SolidAuthService, private router: Router) { }
@@ -44,16 +46,16 @@ export class LoginComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.providerControl = new FormControl('', [Validators.required])
     this.identityProviders = this.authService.getIdentityProviders()
-    this.authService.currentSession.subscribe(
-      session => {
-        this.loggedIn = !session ? false : true
-      }
-    )
+    this.checkSession()
   }
 
   ngOnDestroy() {
     if (this.loginSubscription) {
       this.loginSubscription.unsubscribe()
+    }
+
+    if (this.loggedInSub) {
+      this.loggedInSub.unsubscribe()
     }
   }
 
@@ -64,7 +66,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     const idp: string = this.selectedProviderUrl ? this.selectedProviderUrl : this.customProviderUrl
     try {
       this.loginSubscription = this.authService.solidLogin(idp).subscribe(
-        _ => {}, // just do nothing
+        _ => { this.checkSession() },
         err => console.error('Error while calling the Solid Identity Provider: %o', err)
       )
     } catch (err) {
@@ -74,5 +76,20 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   goToRegistration(): any {
     throw new Error('Function not implemented yet')
+  }
+
+  /**
+   * Checks and sets the Solid session
+   * @private
+   */
+  private checkSession() {
+    this.loggedInSub = this.authService.currentSession.subscribe(
+      session => {
+        this.loggedIn = !session ? false : true
+        if (this.loggedIn) {
+          this.router.navigate(['/profile'])
+        }
+      }
+    )
   }
 }

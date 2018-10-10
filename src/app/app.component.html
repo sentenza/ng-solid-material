@@ -3,11 +3,44 @@
 <!-- Creates a layout with a left-positioned sidenav and explicit content. -->
 <mat-sidenav-container class="app-container d-flex flex-column h-100">
   <mat-sidenav #sidenav class="app-sidenav">
-    <mat-list class="list-nav">
-      <mat-list-item class="list-item">
-        <span class="source-name">The list item</span>
-      </mat-list-item>
-   </mat-list>
+    <!--
+      Sidenav links
+      File Manager (https://github.com/solid/solid-file-manager)
+      Connections (https://github.com/solid/solid-connections)
+      Profile Manager (https://github.com/solid/solid-profile)
+      Account Settings
+      @see https://github.com/solid/solid-dashboard-ui/issues/6
+    -->
+    <div class="sidebar-links d-flex flex-column">
+      <a
+        mat-button
+        class="nav-button"
+        href="https://github.com/solid/solid-file-manager"
+        [attr.aria-label]="'File Manager'">
+        File Manager
+      </a>
+      <a
+        mat-button
+        class="nav-button"
+        href="https://github.com/solid/solid-connections"
+        [attr.aria-label]="'Connections'">
+        Connections
+      </a>
+      <a
+        mat-button
+        class="nav-button"
+        href="https://github.com/solid/solid-profile"
+        [attr.aria-label]="'Profile Manager'">
+        Profile Manager
+      </a>
+      <a
+        mat-button
+        class="nav-button"
+        routerLink="."
+        [attr.aria-label]="'Account settings'">
+        Account settings
+      </a>
+    </div>
   </mat-sidenav>
   <mat-sidenav-content class="app-sidenav-content flex-grow-1">
       <main>

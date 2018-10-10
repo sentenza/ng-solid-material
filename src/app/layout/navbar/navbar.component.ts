@@ -35,7 +35,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   logout() {
     this.loggedOutSub = this.authService.solidSignOut().subscribe(
       res => {
-        console.log('logout response: %o', res)
         // Remove localStorage
         localStorage.removeItem('solid-auth-client')
         // Redirect to login page

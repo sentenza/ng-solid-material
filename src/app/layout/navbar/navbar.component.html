@@ -2,16 +2,27 @@
   <mat-toolbar-row>
     <button mat-button (click)="openSidebar.emit()" ><mat-icon>menu</mat-icon></button>
     <!-- Logo and Button Title -->
-    <a mat-button class="nav-button" routerLink="/" aria-label="title">
+    <a mat-button class="nav-button" routerLink="/" [attr.aria-label]="title">
       <img class="nav-angular-logo"
            src="assets/svg/angular-white-transparent.svg"
            alt="angular">
       <span>{{ title }}</span>
     </a>
+    <!-- Profile Card -->
+    <a
+      mat-button
+      class="nav-button"
+      routerLink="/profile"
+      routerLinkActive="active-link"
+      [disabled]="!loggedIn"
+      [attr.aria-label]="'Profile card'">
+      <mat-icon class="navbar-icon" *ngIf="loggedIn">verified_user</mat-icon>
+      Profile card
+    </a>
+    <!-- Profile Card -->
 
     <!-- <a mat-button class="docs-navbar-hide-small docs-button" routerLink="guides">Guides</a> -->
     <span class="navbar-spacer"></span>
-    <mat-icon class="navbar-icon" *ngIf="loggedIn">verified_user</mat-icon>
     <mat-icon class="navbar-icon" *ngIf="!loggedIn">lock_open</mat-icon>
     <button
       mat-button
