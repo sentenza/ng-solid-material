@@ -3,8 +3,12 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
-};
+  production: false,
+  app: {
+    version: '0.0.3',
+    repository: 'https://github.com/sentenza/ng-solid-material'
+  }
+}
 
 /*
  * In development mode, to ignore zone related error stack frames such as
