@@ -1,6 +1,6 @@
 export interface SolidProvider {
-    name: string,
-    image: string,
-    loginUrl: string,
+    name: string
+    image: string
+    loginUrl: string
     desc: string
 }
