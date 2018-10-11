@@ -1,19 +1,23 @@
-import { Injectable, OnInit } from '@angular/core'
-import * as Rdf from 'rdflib'
-import { SolidSession } from '../models/solid-session.model'
+import { Injectable } from '@angular/core'
 import { NgForm } from '@angular/forms'
+import { Subject, from } from 'rxjs'
+import { SolidSession } from '../models/solid-session.model'
+import { SolidProfile } from '../models/solid-profile.model'
+import * as $rdf from 'rdflib'
 declare let solid: any
 
-const VCARD = Rdf.Namespace('http://www.w3.org/2006/vcard/ns#')
-const FOAF = Rdf.Namespace('http://xmlns.com/foaf/0.1/')
+const VCARD = $rdf.Namespace('http://www.w3.org/2006/vcard/ns#')
+const FOAF = $rdf.Namespace('http://xmlns.com/foaf/0.1/')
+// TODO: Remove any UI interaction
 
 /**
- * A service layer for retrieving data from rdf sources
+ * A service layer for RDF data manipulation using rdflib.js
+ * @see https://solid.inrupt.com/docs/manipulating-ld-with-rdflib
  */
 @Injectable({
   providedIn: 'root'
 })
-export class RdfService implements OnInit {
+export class RdfService {
 
   /**
    * Session: we need the webId
@@ -23,69 +27,102 @@ export class RdfService implements OnInit {
   /**
    * Graph Store
    */
-  store = Rdf.graph()
+  store = $rdf.graph()
 
   /**
    * A helper object that connects to the web, loads data, and saves it back. More powerful than using a simple
    * store object.
    * When you have a fetcher, then you also can ask the query engine to go fetch new linked data automatically
    * as your query makes its way across the web.
+   * @see http://linkeddata.github.io/rdflib.js/doc/Fetcher.html
    */
-  fetcher: Rdf.Fetcher
+  fetcher: $rdf.Fetcher
 
   /**
    * The UpdateManager allows you to send small changes to the server to “patch” the data as your user changes data in
    * real time. It also allows you to subscribe to changes other people make to the same file, keeping track of
    * upstream and downstream changes, and signaling any conflict between them.
+   * @see http://linkeddata.github.io/rdflib.js/doc/UpdateManager.html
    */
-  updateManager: Rdf.UpdateManager
+  updateManager: $rdf.UpdateManager
+
+  /**
+   * A Subject containing the SolidProfile of the
+   * user associated to the session.webId
+   * @type {Subject<Profile>}
+   */
+  solidProfile$: Subject<SolidProfile>
 
   constructor() {
     const fetcherOptions = {}
-    this.fetcher = new Rdf.Fetcher(this.store, fetcherOptions)
-    this.updateManager = new Rdf.UpdateManager(this.store)
-  }
-
-  ngOnInit() {
-    this.getSession()
+    this.fetcher = new $rdf.Fetcher(this.store, fetcherOptions)
+    this.updateManager = new $rdf.UpdateManager(this.store)
+    this.solidProfile$ = new Subject<SolidProfile>()
   }
 
   /**
-   * Fetches the session from Solid, and store results in localStorage
+   * Fetch a SolidProfile taking advantage of rdflib.
+   *
+   * Note about $rdf.Fetcher.load(): Promise-based load function,
+   * Loads a web resource or resources into the store. A resource may be given as NamedNode object,
+   * or as a plain URI. an arrsy of resources will be given, in which they will be fetched in parallel.
+   * By default, the HTTP headers are recorded also, in the same store, in a separate graph.
+   *
+   * @throws {Error} if the $rdf.Fetcher fails to load the profile
+   * @return {void}
    */
-  getSession = async() => {
-    this.session = await solid.auth.currentSession(localStorage)
+  fetchProfile(webId: string) {
+    // TODO validate the empty string
+    if (webId === '') {
+      throw new Error('getProfile: Invalid webId')
+    }
+    // Wait for the Fetcher/Promise and produce the next value for the Subject
+    from(this.fetcher.load(webId))
+      .subscribe(
+        _ => {
+          // Fetcher.load will save its results into the store ($rdf.graph())
+          // Creating a new SolidProfile from the data saved into the store
+          const profile: SolidProfile = {
+            fn : this.getValueFromVcard('fn', webId),
+            company : this.getValueFromVcard('organization-name', webId),
+            phone: this.getPhone(webId),
+            role: this.getValueFromVcard('role', webId),
+            image: this.getValueFromVcard('hasPhoto', webId),
+            address: this.getAddress(webId),
+            email: this.getEmail(webId),
+          }
+          this.solidProfile$.next(profile)
+        },
+        error => {throw new Error(`Error fetching Solid Profile data: ${error}`)}
+      )
   }
 
   /**
    * Gets a node that matches the specified pattern using the VCARD onthology
-   * @param {string} node
-   * @param {string?} webId
-   * @return {string}
+   *
+   * any() can take a subject and a predicate to find Any one person identified by the webId
+   * that matches against the node/predicated
+   *
+   * @param {string} node VCARD predicate to apply to the $$rdf.any()
+   * @param {string?} webId The webId URL (e.g. https://yourpod.solid.community/profile/card#me)
+   * @return {string\any} The value of the fetched node or an emtpty string
+   * @see https://github.com/solid/solid-tutorial-rdflib.js
    */
-  getValueFromVcard = (node: string, webId?: string): string => {
-    const fetchedNode = this.store.any(Rdf.sym(webId || this.session.webId), VCARD(node))
-    if (fetchedNode) {
-      return fetchedNode.value
-    }
-    return ''
+  getValueFromVcard = (node: string, webId: string): string | any => {
+    return this.getValueFromNamespace(node, VCARD, webId)
   }
 
   /**
    * Gets a node that matches the specified pattern using the FOAF onthology
-   * @param {string} node
-   * @param {string?} webId
-   * @return {string}
+   * @param {string} node FOAF predicate to apply to the $$rdf.any()
+   * @param {string?} webId The webId URL (e.g. https://yourpod.solid.community/profile/card#me)
+   * @return {string|any} The value of the fetched node or an emtpty string
    */
-  getValueFromFoaf = (node: string, webId?: string): string => {
-    const store = this.store.any(Rdf.sym(webId || this.session.webId), FOAF(node))
-    if (store) {
-      return store.value
-    }
-    return ''
+  getValueFromFoaf = (node: string, webId: string): string | any => {
+    return this.getValueFromNamespace(node, FOAF, webId)
   }
 
-  transformDataForm = (form: NgForm, me: any, doc: any) => {
+  transformDataForm = (form: NgForm, me: any, doc: any, webId: string) => {
     const insertions = []
     const deletions = []
     const fields = Object.keys(form.value)
@@ -98,7 +135,7 @@ export class RdfService implements OnInit {
     // These are separate codepaths because the system needs to know what to do in each case
     fields.map(field => {
       const predicate = VCARD(this.getFieldName(field))
-      const subject = this.getUriForField(field, me)
+      const subject = this.getUriForField(field, me, webId)
       const why = doc
 
       const fieldValue = this.getFieldValue(form, field)
@@ -111,14 +148,14 @@ export class RdfService implements OnInit {
       } else {
         // Add a value to be updated
         if (oldProfileData[field] && form.value[field] && !form.controls[field].pristine) {
-          deletions.push(Rdf.st(subject, predicate, oldFieldValue, why))
-          insertions.push(Rdf.st(subject, predicate, fieldValue, why))
+          deletions.push($rdf.st(subject, predicate, oldFieldValue, why))
+          insertions.push($rdf.st(subject, predicate, fieldValue, why))
         } else if (oldProfileData[field] && !form.value[field] && !form.controls[field].pristine) {
           // Add a value to be deleted
-          deletions.push(Rdf.st(subject, predicate, oldFieldValue, why))
+          deletions.push($rdf.st(subject, predicate, oldFieldValue, why))
         } else if (!oldProfileData[field] && form.value[field] && !form.controls[field].pristine) {
           // Add a value to be inserted
-          insertions.push(Rdf.st(subject, predicate, fieldValue, why))
+          insertions.push($rdf.st(subject, predicate, fieldValue, why))
         }
       }
     })
@@ -129,10 +166,10 @@ export class RdfService implements OnInit {
     }
   }
 
-  updateProfile = async (form: NgForm) => {
-    const me: Rdf.NamedNode = Rdf.sym(this.session.webId)
-    const doc = Rdf.NamedNode.fromValue(this.session.webId.split('#')[0])
-    const data = this.transformDataForm(form, me, doc)
+  updateProfile = async (webId: string, form: NgForm) => {
+    const me: $rdf.NamedNode = $rdf.sym(webId)
+    const doc = $rdf.NamedNode.fromValue(webId.split('#')[0])
+    const data = this.transformDataForm(form, me, doc, webId)
 
     // Update existing values
     if (data.insertions.length > 0 || data.deletions.length > 0) {
@@ -149,8 +186,8 @@ export class RdfService implements OnInit {
     }
   }
 
-  getAddress = () => {
-    const linkedUri = this.getValueFromVcard('hasAddress')
+  getAddress = (webId: string) => {
+    const linkedUri = this.getValueFromVcard('street-address', webId)
 
     if (linkedUri) {
       return {
@@ -167,8 +204,8 @@ export class RdfService implements OnInit {
   /**
    * Function to get email. This returns only the first email, which is temporary
    */
-  getEmail = () => {
-    const linkedUri = this.getValueFromVcard('hasEmail')
+  getEmail = (webId) => {
+    const linkedUri = this.getValueFromVcard('hasEmail', webId)
 
     if (linkedUri) {
       return this.getValueFromVcard('value', linkedUri).split('mailto:')[1]
@@ -181,35 +218,27 @@ export class RdfService implements OnInit {
    * Function to get phone number.
    * This returns only the first phone number, which is temporary. It also ignores the type.
    */
-  getPhone = () => {
-    const linkedUri = this.getValueFromVcard('hasTelephone')
+  getPhone = (webId: string) => {
+    const linkedUri = this.getValueFromVcard('hasTelephone', webId)
 
     if (linkedUri) {
       return this.getValueFromVcard('value', linkedUri).split('tel:+')[1]
     }
   }
 
-  getProfile = async () => {
-
-    if (!this.session) {
-      await this.getSession()
+  /**
+   * Gets any resource that matches the node, using the provided Namespace
+   * @param {string} node The name of the predicate to be applied using the provided Namespace
+   * @param {$rdf.namespace} namespace The RDF Namespace
+   * @param {string?} webId The webId URL (e.g. https://yourpod.solid.community/profile/card#me)
+   */
+  private getValueFromNamespace(node: string, namespace: $rdf.Namespace, webId?: string): string | any {
+    const userNamedNode = $rdf.sym(webId)
+    const store = this.store.any(userNamedNode, namespace(node))
+    if (store) {
+      return store.value
     }
-
-    try {
-      await this.fetcher.load(this.session.webId)
-
-      return {
-        fn : this.getValueFromVcard('fn'),
-        company : this.getValueFromVcard('organization-name'),
-        phone: this.getPhone(),
-        role: this.getValueFromVcard('role'),
-        image: this.getValueFromVcard('hasPhoto'),
-        address: this.getAddress(),
-        email: this.getEmail(),
-      }
-    } catch (error) {
-      console.log(`Error fetching data: ${error}`)
-    }
+    return ''
   }
 
   /**
@@ -233,22 +262,23 @@ export class RdfService implements OnInit {
    * Given a Field, this function will return its URI
    * @param {string} field The field
    * @param {any} me
+   * @param {string} webId WebID URL
    */
-  private getUriForField(field: string, me): any {
+  private getUriForField(field: string, me, webId: string): any {
     let uriString: string
     let uri: any // Should it be a NamedNode?
 
     switch (field) {
       case 'phone':
-        uriString = this.getValueFromVcard('hasTelephone')
+        uriString = this.getValueFromVcard('hasTelephone', webId)
         if (uriString) {
-          uri = Rdf.sym(uriString)
+          uri = $rdf.sym(uriString)
         }
         break
       case 'email':
-        uriString = this.getValueFromVcard('hasEmail')
+        uriString = this.getValueFromVcard('hasEmail', webId)
         if (uriString) {
-          uri = Rdf.sym(uriString)
+          uri = $rdf.sym(uriString)
         }
         break
       default:
@@ -260,7 +290,7 @@ export class RdfService implements OnInit {
   }
 
   /**
-   * Extracts the value of a field of a NgForm and converts it to a Rdf.NamedNode
+   * Extracts the value of a field of a NgForm and converts it to a $rdf.NamedNode
    * @param {NgForm} form
    * @param {string} field The name of the field that is going to be extracted from the form
    * @return {RdfNamedNode}
@@ -274,10 +304,10 @@ export class RdfService implements OnInit {
 
     switch (field) {
       case 'phone':
-        fieldValue = Rdf.sym('tel:+' + form.value[field])
+        fieldValue = $rdf.sym('tel:+' + form.value[field])
         break
       case 'email':
-        fieldValue = Rdf.sym('mailto:' + form.value[field])
+        fieldValue = $rdf.sym('mailto:' + form.value[field])
         break
       default:
         fieldValue = form.value[field]
@@ -296,10 +326,10 @@ export class RdfService implements OnInit {
 
     switch (field) {
       case 'phone':
-        oldValue = Rdf.sym('tel:+' + oldProfile[field])
+        oldValue = $rdf.sym('tel:+' + oldProfile[field])
         break
       case 'email':
-        oldValue = Rdf.sym('mailto:' + oldProfile[field])
+        oldValue = $rdf.sym('mailto:' + oldProfile[field])
         break
       default:
         oldValue = oldProfile[field]
@@ -314,20 +344,20 @@ export class RdfService implements OnInit {
     const newId = field + ':' + Date.now()
 
     // Get a new subject, using the new ID
-    const newSubject: Rdf.NamedNode = Rdf.sym(this.session.webId.split('#')[0] + '#' + newId)
+    const newSubject: $rdf.NamedNode = $rdf.sym(this.session.webId.split('#')[0] + '#' + newId)
 
     // Set new predicate, based on email or phone fields
-    const newPredicate = field === 'phone' ? Rdf.sym(VCARD('hasTelephone').toString()) : Rdf.sym(VCARD('hasEmail').toString())
+    const newPredicate = field === 'phone' ? $rdf.sym(VCARD('hasTelephone').toString()) : $rdf.sym(VCARD('hasEmail').toString())
 
     // Add new phone or email to the pod
-    insertions.push(Rdf.st(newSubject, predicate, fieldValue, why))
+    insertions.push($rdf.st(newSubject, predicate, fieldValue, why))
 
     // Set the type (defaults to Home/Personal for now) and insert it into the pod as well
     // Todo: Make this dynamic
-    const type = field === 'phone' ? Rdf.literal('Home', 'en') : Rdf.literal('Personal', 'en')
-    insertions.push(Rdf.st(newSubject, VCARD('type'), type, why))
+    const type = field === 'phone' ? $rdf.literal('Home', 'en') : $rdf.literal('Personal', 'en')
+    insertions.push($rdf.st(newSubject, VCARD('type'), type, why))
 
     // Add a link in #me to the email/phone number (by id)
-    insertions.push(Rdf.st(me, newPredicate, newSubject, why))
+    insertions.push($rdf.st(me, newPredicate, newSubject, why))
   }
 }

@@ -1,9 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core'
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core'
 import { SolidAuthService } from '../auth/solid-auth.service'
 import { SolidProfile } from '../models/solid-profile.model'
 import { RdfService } from '../shared/rdf.service'
 import { FormGroup, FormControl, FormGroupDirective, NgForm, Validators } from '@angular/forms'
 import { ErrorStateMatcher } from '@angular/material/core'
+import { Subject, Subscription } from 'rxjs'
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class FormErrorStateMatcher implements ErrorStateMatcher {
@@ -19,26 +20,37 @@ export class FormErrorStateMatcher implements ErrorStateMatcher {
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
   /**
    * Avoids the display of the form if we're still loading the profile data
    * @type {Boolean}
    */
   loadingProfile: Boolean
+
   /**
    * The profile pic (URL)
    * @type {string}
    */
   profileImage = ''
+
   /**
    * This object will contain all the profile data
    * @type {SolidProfile}
    */
   profile: SolidProfile
+
   /**
    * The group of form fields that build up the Profile Form
    */
   profileForm: FormGroup
+
+  /**
+   * WebId URL, e.g. https://yourpod.solid.community/profile/card#me
+   * @type {string}
+   */
+  webId: string
+
+  private profileSubscription: Subscription
   matcher = new FormErrorStateMatcher()
 
 
@@ -57,29 +69,46 @@ export class ProfileComponent implements OnInit {
     }
 
   ngOnInit() {
-    this.loadProfile()
+    this.authService.currentSession
+      .subscribe(session => {
+        this.webId = session.webId
+        this.loadProfile(this.webId)
+      })
+  }
+
+  ngOnDestroy() {
+    this.profileSubscription.unsubscribe()
   }
 
   onSubmit() {
     throw new Error('Not implemented yet')
   }
 
-  // Loads the profile from the rdf service and handles the response
-  async loadProfile() {
+  /**
+   * Loads the profile from the rdf service and handles the response
+   * @param {string} webId WebID URL, which identifies the user uniquely
+   */
+  loadProfile(webId: string) {
+    this.loadingProfile = true
     try {
-      this.loadingProfile = true
-      const profile = await this.rdfService.getProfile()
-      if (profile) {
-        console.log('The received profile: %o', profile)
-        this.profile = profile
-        this.authService.saveOldUserData(profile)
-        this.updateProfileForm()
-      }
-      this.loadingProfile = false
-      this.setupProfileData()
+      this.rdfService.fetchProfile(webId)
     } catch (error) {
-      console.log(`Error: ${error}`)
+      console.error(error)
     }
+    this.profileSubscription = this.rdfService.solidProfile$
+      .subscribe(
+        profile => {
+          if (profile) {
+            this.profile = profile
+            // To save old user data we could use something like a BehaviourSubject
+            this.authService.saveOldUserData(profile)
+            this.updateProfileForm()
+            this.setupProfileData()
+          }
+          this.loadingProfile = false
+        },
+        err => console.error(err)
+      )
   }
 
   private updateProfileForm() {

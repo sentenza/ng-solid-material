@@ -33,6 +33,7 @@ export class SolidAuthService {
   }
 
   /**
+   * TODO: Should we use the Rx.shareReplay() operator to avoid duplicates?
    * @type {Observable<SolidSession>}
    */
   public get currentSession(): Observable<SolidSession> {
