@@ -1,7 +1,12 @@
+export interface SolidAddress {
+    locality: string
+    country_name: string
+    region: string
+    street: string
+}
+
 export interface SolidProfile {
-    address: {
-        street?: string
-    }
+    address: SolidAddress
     company: string
     email: string
     fn: string
