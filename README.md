@@ -2,6 +2,14 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.8.
 
+The essential blocks that compose this application are:
+
+- SOLID
+- [rdflib.js][rdflib]: a library for fetching, parsing and serializing RDF data using several serialization formats 
+- solid-auth-client
+
+# Getting started
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
@@ -83,5 +91,13 @@ Since Solid represent things with Linked Data, it is useful if you’re able to 
 }</script>
 ```
 
+# Useful Links
+
+- [rdflib.js](https://github.com/linkeddata/rdflib.js)
+- [Solid hacks](https://github.com/melvincarvalho/solid-hacks)
+- [Manipulating LD with rdflib.js](https://solid.inrupt.com/docs/manipulating-ld-with-rdflib)
+- [List of namespaces used by Solid](https://github.com/solid/solid-ui/blob/master/src/ns.js)
+
+[rdflib]: http://linkeddata.github.io/rdflib.js/doc/index.html
 [solid-specs]: https://github.com/solid/solid-spec
 [json-ld]: https://json-ld.org/
