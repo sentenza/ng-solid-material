@@ -50,8 +50,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
    */
   webId: string
 
-  private profileSubscription: Subscription
+  /**
+   * Profile serialised using Turtle
+   * @type {string}
+   */
+  turtleProfile: string
+
   matcher = new FormErrorStateMatcher()
+  private profileSubscription: Subscription
+  private turtleSubscription: Subscription
 
 
   constructor(
@@ -78,6 +85,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.profileSubscription.unsubscribe()
+    this.turtleSubscription.unsubscribe()
   }
 
   onSubmit() {
@@ -109,6 +117,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         },
         err => console.error(err)
       )
+    this.turtleSubscription = this.rdfService.solidTurtle$.subscribe(t => this.turtleProfile = t)
   }
 
   private updateProfileForm() {

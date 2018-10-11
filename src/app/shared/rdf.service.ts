@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core'
 import { NgForm } from '@angular/forms'
 import { Subject, from } from 'rxjs'
 import { SolidSession } from '../models/solid-session.model'
-import { SolidProfile } from '../models/solid-profile.model'
+import { SolidProfile, SolidAddress } from '../models/solid-profile.model'
 import * as $rdf from 'rdflib'
 declare let solid: any
 
@@ -53,11 +53,19 @@ export class RdfService {
    */
   solidProfile$: Subject<SolidProfile>
 
+  /**
+   * Serialization of the current contents of the store (Graph)
+   * using the 'text/turtle' format
+   * @type {Subject<string>}
+   */
+  solidTurtle$: Subject<string>
+
   constructor() {
     const fetcherOptions = {}
     this.fetcher = new $rdf.Fetcher(this.store, fetcherOptions)
     this.updateManager = new $rdf.UpdateManager(this.store)
     this.solidProfile$ = new Subject<SolidProfile>()
+    this.solidTurtle$ = new Subject<string>()
   }
 
   /**
@@ -92,9 +100,21 @@ export class RdfService {
             email: this.getEmail(webId),
           }
           this.solidProfile$.next(profile)
+          this.solidTurtle$.next(this.nextTurtle(webId))
         },
         error => {throw new Error(`Error fetching Solid Profile data: ${error}`)}
       )
+  }
+
+  /**
+   * Serialise RDF doc from the store using Turtle
+   * @return {string} The serialised doc in Turtle
+   */
+  private nextTurtle(webId: string): string {
+    const me: $rdf.NamedNode = $rdf.sym(webId)
+    const profileDoc = me.doc()
+
+    return $rdf.serialize(profileDoc, this.store, null, 'text/turtle')
   }
 
   /**
@@ -187,18 +207,33 @@ export class RdfService {
   }
 
   getAddress = (webId: string) => {
-    const linkedUri = this.getValueFromVcard('street-address', webId)
+    let address: SolidAddress
+    const linkedUri = this.getValueFromVcard('hasAddress', webId)
 
     if (linkedUri) {
-      return {
+      address = {
         locality: this.getValueFromVcard('locality', linkedUri),
         country_name: this.getValueFromVcard('country-name', linkedUri),
         region: this.getValueFromVcard('region', linkedUri),
         street: this.getValueFromVcard('street-address', linkedUri),
       }
+    } else {
+      // Get all the quads that have
+      // let quads = this.store.match(subject, predicate, object, document);
+      const me = $rdf.sym(webId)
+      const profile = me.doc()
+      // Get the list of addresses
+      const addr = this.store.match(null, VCARD('street-address')).map(st => st.object)
+      // END TEST
+      address = {
+        locality: 'ND',
+        country_name: 'ND',
+        region: 'ND',
+        street: addr.length >= 1 ? addr[0].value : 'ND'
+      }
     }
 
-    return {}
+    return address
   }
 
   /**
@@ -206,6 +241,8 @@ export class RdfService {
    */
   getEmail = (webId) => {
     const linkedUri = this.getValueFromVcard('hasEmail', webId)
+    // const me = $rdf.sym(webId)
+    // const subj = this.store.match(null, null, VCARD('Home')).map(s => s.subject)[0].value
 
     if (linkedUri) {
       return this.getValueFromVcard('value', linkedUri).split('mailto:')[1]
