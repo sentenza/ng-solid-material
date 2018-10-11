@@ -6,21 +6,21 @@
 }
 
 .app-footer-version {
-  flex: 1;
-  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .app-footer-copyright {
   display: flex;
   flex: 1;
-  justify-content: flex-end;
+  justify-content: flex-start;
   flex-direction: column;
   min-width: 225px;
   text-align: center;
 }
 
-@media screen and (max-width: 884px){
-  .app-footer-list {
-    flex-direction: column;
-  }
-}
+// @media screen and (max-width: 884px){
+//   .app-footer-list {
+//     flex-direction: column;
+//   }
+// }

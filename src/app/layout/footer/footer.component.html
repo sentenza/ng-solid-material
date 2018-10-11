@@ -1,27 +1,37 @@
-<footer class="app-footer fixed-bottom">
+<footer class="app-footer fixed-bottom d-none d-sm-block">
   <div class="app-footer-list">
     <div class="container">
-      <div class="row">
-        <div class="col">
-            <div class="app-footer-version">
-                <span class="version">Current Version: v{{ version }}</span>
-            </div>
-            <div class="app-footer-copyright">
-                <span>&copy; <a href="https://github.com/sentenza">sentenza</a> 2018.</span>
-                <span>Code licensed under the 
-                  <a href="https://github.com/sentenza/ng-solid-material/blob/master/LICENSE">MIT License</a>.
-                </span>
-                <!-- Fork me -->
-                <a mat-button [href]="repoURL" class="w-auto mx-auto">
-                  <i class="fa fa-code-fork" aria-hidden="true"></i> 
-                  Fork me on <i class="fa fa-github" aria-hidden="true"></i>
-                </a>
-                <!-- Fork me -->
-
-              </div>
-            </div>
+      <!-- row -->
+      <div class="row align-items-center justify-content-between">
+        <!-- col -->
+        <div class="col-4 align-middle">
+          <span class="app-footer-version">
+              <i class="fa fa-code" aria-hidden="true"></i> v{{ version }}
+          </span>
+          <!-- <div class="app-footer-copyright">
+            <span>&copy; <a href="https://github.com/sentenza">sentenza</a> 2018.</span>
+            <span>Code licensed under the
+              <a href="https://github.com/sentenza/ng-solid-material/blob/master/LICENSE">MIT License</a>.
+            </span>
+          </div> -->
         </div>
         <!-- col -->
+    
+        <!-- col -->
+        <div class="col-4">
+          <!-- Fork me -->
+          <a mat-button [href]="repoURL" class="w-auto mx-auto">
+            <i class="fa fa-code-fork" aria-hidden="true"></i>
+            Fork me on <i class="fa fa-github" aria-hidden="true"></i>
+          </a>
+          <!-- Fork me -->
+        </div>
+        <!-- col -->
+    
+      </div>
+      <!-- row -->
+
+
 
       </div>
     </div>

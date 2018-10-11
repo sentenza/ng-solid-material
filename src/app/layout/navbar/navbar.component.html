@@ -2,7 +2,7 @@
   <mat-toolbar-row>
     <button mat-button (click)="openSidebar.emit()" ><mat-icon>menu</mat-icon></button>
     <!-- Logo and Button Title -->
-    <a mat-button class="nav-button" routerLink="/" [attr.aria-label]="title">
+    <a mat-button class="nav-button d-none d-sm-block" routerLink="/" [attr.aria-label]="title">
       <img class="nav-angular-logo"
            src="assets/svg/angular-white-transparent.svg"
            alt="angular">
@@ -11,7 +11,7 @@
     <!-- Profile Card -->
     <a
       mat-button
-      class="nav-button"
+      class="nav-button d-none d-sm-block"
       routerLink="/profile"
       routerLinkActive="active-link"
       [disabled]="!loggedIn"

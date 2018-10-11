@@ -1,31 +1,25 @@
-// .app-sidenav {
-//     padding: 20px;
-// }
-
 .app-container {
-    // width: 100%;
-    height: auto;
-    /* Margin bottom by footer height */
+    // Forcing the width to expand the mat-sidenav-container
+    width: 100%;
     background-color: rgba(255,255,255,1);
-    padding-bottom: 180px;
+    // padding-bottom: 180px;
 }
 
 // Margin-top for the Navbar
 .app-sidenav,
 .app-sidenav-content {
-    margin-top: 64px;
+    margin-top: 47px;
+}
+
+.app-sidenav-content {
+    padding-top: 1rem;
 }
 
 .app-sidenav {
     .mat-button {
-        line-height: 4em;
+        line-height: 4rem;
     }
 }
-    // margin-left: 100px;
-    // display: flex;
-    // height: 75%;
-    // align-items: center;
-    // justify-content: center;
 
 // .app-footer {
 //     position: absolute;
