@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core'
 import { NgForm } from '@angular/forms'
 import { Subject, from } from 'rxjs'
-import { SolidSession } from '../models/solid-session.model'
 import { SolidProfile, SolidAddress } from '../models/solid-profile.model'
 import * as $rdf from 'rdflib'
-declare let solid: any
+// declare let solid: any
 
 const VCARD = $rdf.Namespace('http://www.w3.org/2006/vcard/ns#')
 const FOAF = $rdf.Namespace('http://xmlns.com/foaf/0.1/')
@@ -18,11 +17,6 @@ const FOAF = $rdf.Namespace('http://xmlns.com/foaf/0.1/')
   providedIn: 'root'
 })
 export class RdfService {
-
-  /**
-   * Session: we need the webId
-   */
-  session: SolidSession
 
   /**
    * Graph Store
@@ -80,7 +74,7 @@ export class RdfService {
    * @return {void}
    */
   fetchProfile(webId: string) {
-    // TODO validate the empty string
+    // TODO validate the WebId string using a Validator
     if (webId === '') {
       throw new Error('getProfile: Invalid webId')
     }
@@ -164,7 +158,7 @@ export class RdfService {
       // if there's no existing home phone number or email address, we need to add one, then add the link for hasTelephone
       // or hasEmail
       if (!oldFieldValue && fieldValue && (field === 'phone' || field === 'email')) {
-        this.addNewLinkedField(field, insertions, predicate, fieldValue, why, me)
+        this.addNewLinkedField(field, insertions, predicate, fieldValue, why, me, webId)
       } else {
         // Add a value to be updated
         if (oldProfileData[field] && form.value[field] && !form.controls[field].pristine) {
@@ -218,7 +212,7 @@ export class RdfService {
         street: this.getValueFromVcard('street-address', linkedUri),
       }
     } else {
-      // Get all the quads that have
+      // Get all the quads that have a 'n:street-address' predicate
       // let quads = this.store.match(subject, predicate, object, document);
       const me = $rdf.sym(webId)
       const profile = me.doc()
@@ -242,7 +236,21 @@ export class RdfService {
   getEmail = (webId) => {
     const linkedUri = this.getValueFromVcard('hasEmail', webId)
     // const me = $rdf.sym(webId)
-    // const subj = this.store.match(null, null, VCARD('Home')).map(s => s.subject)[0].value
+    // const subj = this.store.match(null, null, VCARD('Home'))
+    // console.log('trying to delet: %o', subj)
+    // this.updateManager.update(subj, [], (uri, ok, message, response) => {
+    //   if (ok) {
+    //     console.log('DELETED')
+    //   } else {
+    //     console.warn(message)
+    //   }
+    // })
+    // DELETE THIS SHIT
+    // this.store.fetcher.webOperation('DELETE', subj.value)
+    // .then(
+    //   removed => console.log(removed),
+    //   a => console.log(a)
+    // )
 
     if (linkedUri) {
       return this.getValueFromVcard('value', linkedUri).split('mailto:')[1]
@@ -376,12 +384,12 @@ export class RdfService {
     return oldValue
   }
 
-  private addNewLinkedField(field: string, insertions, predicate, fieldValue, why, me: any) {
+  private addNewLinkedField(field: string, insertions, predicate, fieldValue, why, me: any, webId: string) {
     // Generate a new ID. This id can be anything but needs to be unique.
     const newId = field + ':' + Date.now()
 
     // Get a new subject, using the new ID
-    const newSubject: $rdf.NamedNode = $rdf.sym(this.session.webId.split('#')[0] + '#' + newId)
+    const newSubject: $rdf.NamedNode = $rdf.sym(webId.split('#')[0] + '#' + newId)
 
     // Set new predicate, based on email or phone fields
     const newPredicate = field === 'phone' ? $rdf.sym(VCARD('hasTelephone').toString()) : $rdf.sym(VCARD('hasEmail').toString())

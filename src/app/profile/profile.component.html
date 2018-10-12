@@ -122,12 +122,26 @@
         <!-- ROW -->
         <div class="row">
           <div class="col">
-            <mat-form-field style="width: 100%">
-              <textarea matInput placeholder="Turtle"
-                [value]="turtleProfile"
-                matTextareaAutosize matAutosizeMinRows=5 
-                matAutosizeMaxRows=25></textarea>
-            </mat-form-field>
+            <mat-tab-group>
+                <!-- JSON-LD Tab -->
+                <mat-tab label="JSON-LD">
+                    <mat-form-field style="width: 100%">
+                        <textarea matInput placeholder="JSON-LD"
+                          [value]="'nyi'"
+                          matTextareaAutosize matAutosizeMinRows=5 
+                          matAutosizeMaxRows=25></textarea>
+                      </mat-form-field>
+                </mat-tab>
+                <!-- Turtle Tab -->
+                <mat-tab label="Turtle">
+                    <mat-form-field style="width: 100%">
+                        <textarea matInput placeholder="Turtle"
+                          [value]="turtleProfile"
+                          matTextareaAutosize matAutosizeMinRows=5 
+                          matAutosizeMaxRows=25></textarea>
+                      </mat-form-field>
+                </mat-tab>
+              </mat-tab-group>
           </div>
         </div>
 
