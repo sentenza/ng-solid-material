@@ -97,6 +97,10 @@ Since Solid represent things with Linked Data, it is useful if you’re able to 
 - [Solid hacks](https://github.com/melvincarvalho/solid-hacks)
 - [Manipulating LD with rdflib.js](https://solid.inrupt.com/docs/manipulating-ld-with-rdflib)
 - [List of namespaces used by Solid](https://github.com/solid/solid-ui/blob/master/src/ns.js)
+- [Solid Hacks](https://solid.gitbook.io/solid-hacks/appendices/appendix-a-solid-resources)
+- [rdflib.js docs](http://linkeddata.github.io/rdflib.js/doc/)
+- [rdflib.js tutorial](https://rawgit.com/linkeddata/rdflib.js/Documentation/Documentation/webapp-intro.html)
+- [VCARD definitions in JS](https://github.com/solid/solid-panes/blob/81a7fef9f688c477a3b86f8e2b32c0014c043113/contact/vcard.js)
 
 [rdflib]: http://linkeddata.github.io/rdflib.js/doc/index.html
 [solid-specs]: https://github.com/solid/solid-spec
