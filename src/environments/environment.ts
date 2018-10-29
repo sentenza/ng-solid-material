@@ -6,7 +6,7 @@ export const environment = {
   production: false,
   logLevel: 'dev',
   app: {
-    version: '0.0.6-alpha',
+    version: '0.0.7-alpha',
     repository: 'https://github.com/sentenza/ng-solid-material'
   }
 }
